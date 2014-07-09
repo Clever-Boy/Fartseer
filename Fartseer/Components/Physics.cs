@@ -18,12 +18,19 @@ using Microsoft.Xna.Framework;
 
 namespace Fartseer.Components
 {
-	public struct BodyInfo
+	public class BodyInfo
 	{
 		//public Sprite sprite;
 		public Vertex[] verts;
 		public Vector2f origin;
 		public Texture texture;
+
+		public bool enabled;
+
+		public BodyInfo()
+		{
+			enabled = true;
+		}
 	}
 
 	public class Physics : GameComponent
@@ -109,6 +116,11 @@ namespace Fartseer.Components
 			body.UserData = info;
 
 			return body;
+		}
+
+		public void RemoveBody(Body body)
+		{
+			World.RemoveBody(body);
 		}
 	}
 }

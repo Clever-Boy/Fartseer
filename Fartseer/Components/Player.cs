@@ -25,7 +25,7 @@ namespace Fartseer.Components
 		{
 		}
 
-		public override List<GameComponent> GetInitComponents()
+		protected override List<GameComponent> GetInitComponents()
 		{
 			List<GameComponent> components = new List<GameComponent>();
 			components.Add(new CenterView());

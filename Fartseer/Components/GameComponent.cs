@@ -53,7 +53,7 @@ namespace Fartseer.Components
 		}
 
 		// supposed to be overridden by component
-		public virtual List<GameComponent> GetInitComponents()
+		protected virtual List<GameComponent> GetInitComponents()
 		{
 			return new List<GameComponent>();
 		}

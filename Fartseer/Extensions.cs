@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Fartseer.Components;
+
 using SFML.Graphics;
 using SFML.Window;
 

@@ -61,9 +61,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Attachment.cs" />
     <Compile Include="Components\CenterView.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="Components\ProjectileManager.cs" />
+    <Compile Include="Components\Weapon.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Components\GameComponent.cs" />
