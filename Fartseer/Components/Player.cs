@@ -34,6 +34,9 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
+			Weapon weapon = new Weapon(0);
+			EquipWeapon(weapon);
+
 			return base.Init();
 		}
 

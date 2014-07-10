@@ -44,14 +44,11 @@ namespace Fartseer.Components
 
 		List<ICommand> commands;
 		Body body;
+		Weapon equippedWeapon;
 
 		public Actor(int initPriority)
 			: base(initPriority)
 		{
-		}
-		static Actor()
-		{
-			
 		}
 
 		public virtual void Move(MoveDirection dir, float amount)
@@ -75,6 +72,29 @@ namespace Fartseer.Components
 		public void Hurt(int amount)
 		{
 			Health -= amount;
+		}
+
+		public void EquipWeapon(Weapon weapon)
+		{
+			// TODO: better weapon equality checking maybe
+			if (equippedWeapon == weapon)
+			{
+				Console.WriteLine("Cannot equip (TODO: weapon name here); it is already equipped");
+				return;
+			}
+			AddComponent(weapon);
+			equippedWeapon = weapon;
+		}
+
+		public void UnequipWeapon()
+		{
+			if (equippedWeapon == null)
+			{
+				Console.WriteLine("Cannot unequip weapon; there is no weapon equipped");
+				return;
+			}
+			RemoveComponent(equippedWeapon);
+			equippedWeapon = null;
 		}
 
 		// supposed to be overridden by component
