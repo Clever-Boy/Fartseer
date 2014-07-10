@@ -83,6 +83,7 @@ namespace Fartseer.Components
 			return new List<ICommand>();
 		}
 
+		// these methods provide an easier way to create commands
 		protected ICommand CreateKeyboardCommand(Keyboard.Key key, Action<Actor> action)
 		{
 			return CreateKeyboardCommand(key, false, action);

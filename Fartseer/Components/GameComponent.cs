@@ -141,13 +141,24 @@ namespace Fartseer.Components
 			List<T> components = GetComponents<T>();
 			if (components.Count < 1)
 				return default(T);
-			return GetComponents<T>()[0];
+			return components[0];
+		}
+		public T GetComponent<T>(Func<GameComponent, bool> condition)
+		{
+			List<T> components = GetComponents<T>(condition);
+			if (components.Count < 1)
+				return default(T);
+			return components[0];
 		}
 		public List<T> GetComponents<T>()
 		{
 			// this works since all items in the result list are of type T
 			// else the conversion would fail
 			return Components.FindAll((c) => { return c is T; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); } ));
+		}
+		public List<T> GetComponents<T>(Func<GameComponent, bool> condition)
+		{
+			return Components.FindAll((c) => { return c is T && condition(c) == true; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); }));
 		}
 
 		public bool ContainsComponent<T>()

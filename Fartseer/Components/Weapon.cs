@@ -18,7 +18,5 @@ namespace Fartseer.Components
 		{
 			return base.Init();
 		}
-
-
 	}
 }
