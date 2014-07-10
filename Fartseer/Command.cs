@@ -13,21 +13,37 @@ namespace Fartseer
 		public Game Game { get; set; }
 		Keyboard.Key key;
 		Action<Actor> action;
+		bool once = false; // once means the previous execution has to have failed for the next execution to succeed
+		bool prev = false;
 
 		public KeyboardButtonCommand(Keyboard.Key key, Action<Actor> action)
 		{
 			this.key = key;
 			this.action = action;
 		}
+		public KeyboardButtonCommand(Keyboard.Key key, bool once, Action<Actor> action)
+			: this(key, action)
+		{
+			this.once = once;
+		}
 
 		public bool TryExecute(Actor target)
 		{
+			bool result = false;
 			if (Keyboard.IsKeyPressed(key))
 			{
-				action(target);
-				return true;
+				//Console.WriteLine("{0} {1}", once, prev);
+				if (!once || (once && !prev))
+				{
+					action(target);
+					result = true;
+				}
+				prev = true;
 			}
-			return false;
+			else
+				prev = false;
+
+			return result;
 		}
 	}
 
@@ -36,21 +52,37 @@ namespace Fartseer
 		public Game Game { get; set; }
 		Mouse.Button button;
 		Action<Actor, Vector2i> action;
+		bool once = false; // see above
+		bool prev = false;
 
 		public MouseButtonCommand(Mouse.Button button, Action<Actor, Vector2i> action)
 		{
 			this.button = button;
 			this.action = action;
 		}
+		public MouseButtonCommand(Mouse.Button button, bool once, Action<Actor, Vector2i> action)
+			: this(button, action)
+		{
+			this.once = once;
+		}
 
 		public bool TryExecute(Actor target)
 		{
+			bool result = false;
 			if (Mouse.IsButtonPressed(button))
 			{
-				action(target, Mouse.GetPosition());
-				return false;
+				//Console.WriteLine("{0} {1}", once, prev);
+				if (!once || (once && !prev)) 
+				{
+					action(target, Mouse.GetPosition(Game.Window));
+					result = true;
+				}
+				prev = true;
 			}
-			return true;
+			else
+				prev = false;
+
+			return result;
 		}
 	}
 }

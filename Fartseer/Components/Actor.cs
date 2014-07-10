@@ -43,7 +43,6 @@ namespace Fartseer.Components
 		public int MaxHealth { get; private set; }
 
 		List<ICommand> commands;
-		List<ICommand> tempCommands;
 		Body body;
 
 		public Actor(int initPriority)
@@ -79,27 +78,36 @@ namespace Fartseer.Components
 		}
 
 		// supposed to be overridden by component
-		public virtual void SetupCommands()
+		public virtual List<ICommand> SetupCommands()
 		{
-			tempCommands = new List<ICommand>();
+			return new List<ICommand>();
 		}
-		protected void CreateKeyboardCommand(Keyboard.Key key, Action<Actor> action)
+
+		protected ICommand CreateKeyboardCommand(Keyboard.Key key, Action<Actor> action)
 		{
-			KeyboardButtonCommand cmd = new KeyboardButtonCommand(key, action);
-			cmd.Game = Game;
-			tempCommands.Add(cmd);
+			return CreateKeyboardCommand(key, false, action);
 		}
-		protected void CreateMouseCommand(Mouse.Button button, Action<Actor, Vector2i> action)
+		protected ICommand CreateKeyboardCommand(Keyboard.Key key, bool once, Action<Actor> action)
 		{
-			MouseButtonCommand cmd = new MouseButtonCommand(button, action);
+			KeyboardButtonCommand cmd = new KeyboardButtonCommand(key, once, action);
 			cmd.Game = Game;
-			tempCommands.Add(cmd);
+			return cmd;
+		}
+		protected ICommand CreateMouseCommand(Mouse.Button button, Action<Actor, Vector2i> action)
+		{
+			return CreateMouseCommand(button, false, action);
+		}
+		protected ICommand CreateMouseCommand(Mouse.Button button, bool once, Action<Actor, Vector2i> action)
+		{
+			MouseButtonCommand cmd = new MouseButtonCommand(button, once, action);
+			cmd.Game = Game;
+			return cmd;
 		}
 
 		protected override bool Init()
 		{
-			SetupCommands();
-			commands = tempCommands;
+			// maybe not best implementation
+			commands = SetupCommands();
 
 			Physics physics = Parent.GetComponent<Physics>();
 			if (physics == null)

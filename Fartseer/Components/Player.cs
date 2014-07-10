@@ -37,13 +37,16 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public override void SetupCommands()
+		public override List<ICommand> SetupCommands()
 		{
-			base.SetupCommands();
+			List<ICommand> commands = new List<ICommand>();
 
-			CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5));
-			CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5));
-			CreateKeyboardCommand(Keyboard.Key.Space, (a) => a.Move(MoveDirection.Jump, 5));
+			commands.Add(CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
+			commands.Add(CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
+			commands.Add(CreateKeyboardCommand(Keyboard.Key.Space, true, (a) => a.Move(MoveDirection.Jump, 7)));
+			commands.Add(CreateMouseCommand(Mouse.Button.Left, true, (a, pos) => Parent.GetComponent<Physics>().CreateBody(BodyType.Dynamic, Game.Window.MapPixelToCoords(pos).ToVector2(), new Vector2(32, 32), "boxAlt")));
+
+			return commands;
 		}
 
 		public override Body SetupBody(Physics physics)

@@ -64,12 +64,6 @@ namespace Fartseer
 			{
 				// ground
 				GetComponent<Physics>().CreateBody(BodyType.Static, new Vector2(400, 500), new Vector2(800, 70), "grassMid", true);
-
-				Window.MouseButtonPressed += (s, e) =>
-				{
-					if (e.Button == Mouse.Button.Left)
-						GetComponent<Physics>().CreateBody(BodyType.Dynamic, Window.MapPixelToCoords(new Vector2i(e.X, e.Y)).ToVector2(), new Vector2(32, 32), "boxAlt");
-				};
 			}
 			else
 			{
