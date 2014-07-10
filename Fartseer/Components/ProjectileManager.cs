@@ -32,6 +32,9 @@ namespace Fartseer.Components
 		{
 			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(10, 10), "box.png");
 			body.IsBullet = true;
+			double radian = angle * (Math.PI / 180);
+			Vector2 direction = Extensions.RadianToVector((float)radian).ToVector2();
+			body.ApplyLinearImpulse(direction * 10);
 		}
 	}
 

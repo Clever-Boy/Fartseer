@@ -73,6 +73,7 @@
     <Compile Include="Components\ImageManager.cs" />
     <Compile Include="Components\Physics.cs" />
     <Compile Include="Components\Player.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\WorldRenderer.cs" />

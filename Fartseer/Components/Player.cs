@@ -37,23 +37,13 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public override List<Command> SetupCommands()
+		public override void SetupCommands()
 		{
-			List<Command> commands = new List<Command>();
+			base.SetupCommands();
 
-			commands.Add(new Command(() =>
-			{ return Keyboard.IsKeyPressed(Keyboard.Key.A); }, (actor) =>
-			{ actor.Move(MoveDirection.Left, 5); }));
-
-			commands.Add(new Command(() =>
-			{ return Keyboard.IsKeyPressed(Keyboard.Key.D); }, (actor) =>
-			{ actor.Move(MoveDirection.Right, 5); }));
-
-			commands.Add(new Command(() =>
-			{ return Keyboard.IsKeyPressed(Keyboard.Key.Space); }, (actor) =>
-			{ actor.Move(MoveDirection.Jump, 5); }));
-
-			return commands;
+			CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5));
+			CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5));
+			CreateKeyboardCommand(Keyboard.Key.Space, (a) => a.Move(MoveDirection.Jump, 5));
 		}
 
 		public override Body SetupBody(Physics physics)

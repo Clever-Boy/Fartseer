@@ -42,12 +42,17 @@ namespace Fartseer.Components
 		public int Health { get; private set; }
 		public int MaxHealth { get; private set; }
 
-		List<Command> commands;
+		List<ICommand> commands;
+		List<ICommand> tempCommands;
 		Body body;
 
 		public Actor(int initPriority)
 			: base(initPriority)
 		{
+		}
+		static Actor()
+		{
+			
 		}
 
 		public virtual void Move(MoveDirection dir, float amount)
@@ -74,14 +79,28 @@ namespace Fartseer.Components
 		}
 
 		// supposed to be overridden by component
-		public virtual List<Command> SetupCommands()
+		public virtual void SetupCommands()
 		{
-			throw new NotImplementedException();
+			tempCommands = new List<ICommand>();
+		}
+		protected void CreateKeyboardCommand(Keyboard.Key key, Action<Actor> action)
+		{
+			KeyboardButtonCommand cmd = new KeyboardButtonCommand(key, action);
+			cmd.Game = Game;
+			tempCommands.Add(cmd);
+		}
+		protected void CreateMouseCommand(Mouse.Button button, Action<Actor, Vector2i> action)
+		{
+			MouseButtonCommand cmd = new MouseButtonCommand(button, action);
+			cmd.Game = Game;
+			tempCommands.Add(cmd);
 		}
 
 		protected override bool Init()
 		{
-			commands = SetupCommands();
+			SetupCommands();
+			commands = tempCommands;
+
 			Physics physics = Parent.GetComponent<Physics>();
 			if (physics == null)
 			{
@@ -101,7 +120,7 @@ namespace Fartseer.Components
 
 		public override void Update(double frametime)
 		{
-			foreach (Command cmd in commands)
+			foreach (ICommand cmd in commands)
 				cmd.TryExecute(this);
 
 			base.Update(frametime);
