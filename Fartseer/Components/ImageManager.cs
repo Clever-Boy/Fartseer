@@ -28,7 +28,7 @@ namespace Fartseer.Components
 
 			string path = "texture";
 			string[] files = Directory.GetFiles(path, "*.png");
-			Console.WriteLine("{0}Found {1} PNG files in \"{2}\"", " ".Repeat(initIndex), files.Length, path);
+			Console.WriteLine("Found {0} PNG files in \"{1}\"", files.Length, path);
 			foreach (string file in files)
 			{
 				Image img = new Image(file);
