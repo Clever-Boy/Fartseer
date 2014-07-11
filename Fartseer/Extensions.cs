@@ -22,6 +22,7 @@ namespace Fartseer
 {
 	public static class Extensions
 	{
+		// VECTORS
 		public static Vector2 ToVector2(this Vector2f vec)
 		{
 			return new Vector2(vec.X, vec.Y);
@@ -87,12 +88,32 @@ namespace Fartseer
 			return (float)Math.Atan2(vec.Y - vec1.Y, vec.X - vec1.X);
 		}
 
+		// STRINGS
 		public static string Repeat(this string str, int times)
 		{
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < times; i++)
 				builder.Append(str);
 			return builder.ToString();
+		}
+
+		// MISC
+		public static bool Matches(this ComponentRestriction compRestrict, GameComponent comp)
+		{
+			switch (compRestrict)
+			{
+				case ComponentRestriction.Either:
+					return true;
+
+				case ComponentRestriction.Normal:
+					return !(comp is DrawableGameComponent); // not drawable = normal
+
+				case ComponentRestriction.Drawable:
+					return comp is DrawableGameComponent;
+
+				default:
+					return false;
+			}
 		}
 	}
 }

@@ -13,6 +13,7 @@ namespace Fartseer.Components
 		public CenterView()
 			: base(0)
 		{
+			parentRestriction = ComponentRestriction.Drawable;
 		}
 
 		public override void Update(double frametime)

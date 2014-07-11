@@ -15,6 +15,13 @@ namespace Fartseer.Components
 		Initialized
 	}
 
+	public enum ComponentRestriction
+	{
+		Either,
+		Normal, // TODO: maybe make something else than "Normal"
+		Drawable
+	}
+
 	public class ComponentEventArgs : EventArgs
 	{
 		public ComponentEvent Event { get; private set; }
@@ -30,7 +37,6 @@ namespace Fartseer.Components
 	public abstract class GameComponent
 	{
 		public bool Enabled { get; set; }
-
 		public List<GameComponent> Components { get; private set; }
 		public GameComponent Parent { get; private set; }
 		public Game Game { get; protected set; }
@@ -42,20 +48,46 @@ namespace Fartseer.Components
 
 		protected int initIndex;
 		public int initPriority; // components are initialized in descending order of init priorities
+		protected ComponentRestriction parentRestriction;
 
 		public GameComponent(int initPriority)
 		{
 			this.initPriority = initPriority;
 
 			Components = new List<GameComponent>();
-
 			Enabled = true;
+			parentRestriction = ComponentRestriction.Either;
+			//Console.WriteLine("{0} {1}", this, this is DrawableGameComponent);
+		}
+
+		public string GetComponentTypeString()
+		{
+			if (this is DrawableGameComponent)
+				return "DrawableGameComponent";
+			else
+				return "GameComponent";
 		}
 
 		// supposed to be overridden by component
 		protected virtual List<GameComponent> GetInitComponents()
 		{
 			return new List<GameComponent>();
+		}
+
+		// used by AddComponent, makes sure the component is initialized correctly
+		public bool DoInit(int initIndex)
+		{
+			Console.WriteLine("{0}{1} component initializing (init priority: {2}, init index: {3}, parent restriction: {4})",
+				" ".Repeat(initIndex), this.GetType().Name, initPriority, initIndex, parentRestriction);
+			this.initIndex = initIndex;
+
+			if (!InitComponents())
+				return false;
+
+			if (!Init())
+				return false;
+
+			return true;
 		}
 
 		bool InitComponents()
@@ -70,23 +102,16 @@ namespace Fartseer.Components
 			return true;
 		}
 
-		// used by AddComponent, makes sure the component is initialized correctly
-		public bool DoInit(int initIndex)
-		{
-			Console.WriteLine("{0}{1} component initializing ({2} init priority, {3} init index)", " ".Repeat(initIndex), this.GetType().Name, initPriority, initIndex);
-			this.initIndex = initIndex;
-
-			if (!InitComponents())
-				return false;
-
-			if (!Init())
-				return false;
-
-			return true;
-		}
 		// init should never be called by something else than DoInit (above)
 		protected virtual bool Init()
 		{
+			if (!parentRestriction.Matches(Parent))
+			{
+				Console.WriteLine("{0} component's parent's type does not match parent type restriction (Parent: {1}, Restriction: {2}",
+					this.GetType().Name, Parent.GetComponentTypeString(), parentRestriction);
+				return false;
+			}
+
 			if (Initialized != null)
 				Initialized(this, new ComponentEventArgs(ComponentEvent.Initialized));
 
