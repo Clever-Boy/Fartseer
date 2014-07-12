@@ -43,7 +43,7 @@ namespace Fartseer.Components
 		public int MaxHealth { get; private set; }
 
 		List<ICommand> commands;
-		Body body;
+		protected Body body;
 		Weapon equippedWeapon;
 
 		public Actor(int initPriority)
@@ -135,7 +135,7 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			// maybe not best implementation
+			// TODO: add fail detection to SetupCommands
 			commands = SetupCommands();
 
 			bool failed;

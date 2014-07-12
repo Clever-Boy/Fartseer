@@ -203,7 +203,7 @@ namespace Fartseer.Components
 
 		public bool ContainsComponent<T>()
 		{
-			// http://stackoverflow.com/questions/8216881/how-do-i-check-if-a-list-contains-an-object-of-a-certain-type-c-sharp
+			// source: http://stackoverflow.com/questions/8216881/how-do-i-check-if-a-list-contains-an-object-of-a-certain-type-c-sharp
 			return Components.OfType<T>().Any();
 		}
 	}

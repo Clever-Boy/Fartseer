@@ -79,7 +79,7 @@ namespace Fartseer
 
 		public static Vector2f RadianToVector(float radian)
 		{
-			// http://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
+			// source: http://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
 			return new Vector2f((float)Math.Sin(radian), -(float)Math.Cos(radian));
 		}
 

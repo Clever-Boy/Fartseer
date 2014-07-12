@@ -44,9 +44,18 @@ namespace Fartseer.Components
 		{
 			List<ICommand> commands = base.SetupCommands();
 
+			bool failed;
+			EffectManager effectManager = Parent.GetComponent<EffectManager>(out failed);
+			if (failed)
+			{
+				Console.WriteLine("Cannot find EffectManager in {0}", Parent.GetType().Name);
+				return null;
+			}
+
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.Space, true, (a) => a.Move(MoveDirection.Jump, 7)));
+			commands.Add(CreateKeyboardCommand(Keyboard.Key.E, true, (a) => { effectManager.Explode(Position, 10f, 50f, this.body); }));
 
 			return commands;
 		}

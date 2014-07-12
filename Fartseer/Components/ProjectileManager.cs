@@ -80,7 +80,7 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public void CreateProjectile(Vector2 position, float angle)
+		public Projectile CreateProjectile(Vector2 position, float angle)
 		{
 			Projectile proj;
 			// if there are any unused projectiles, use the first unused projectile
@@ -105,6 +105,8 @@ namespace Fartseer.Components
 			proj.Init(position, 1f, angle);
 			projectiles.Add(proj);
 			//Console.WriteLine("Projectile created (Projectiles: {0})", projectiles.Count);
+
+			return proj;
 		}
 	}
 }
