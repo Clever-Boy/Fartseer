@@ -42,12 +42,11 @@ namespace Fartseer.Components
 
 		public override List<ICommand> SetupCommands()
 		{
-			List<ICommand> commands = new List<ICommand>();
+			List<ICommand> commands = base.SetupCommands();
 
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
 			commands.Add(CreateKeyboardCommand(Keyboard.Key.Space, true, (a) => a.Move(MoveDirection.Jump, 7)));
-			commands.Add(CreateMouseCommand(Mouse.Button.Left, true, (a, pos) => Parent.GetComponent<Physics>().CreateBody(BodyType.Dynamic, Game.Window.MapPixelToCoords(pos).ToVector2(), new Vector2(32, 32), "boxAlt")));
 
 			return commands;
 		}

@@ -41,6 +41,7 @@ namespace Fartseer
 			components.Add(new WorldRenderer(5));
 			components.Add(new Player(2));
 			components.Add(new ImageManager(20));
+			components.Add(new ProjectileManager(9));
 
 			return components;
 		}

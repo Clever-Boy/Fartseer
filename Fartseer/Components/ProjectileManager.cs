@@ -30,11 +30,13 @@ namespace Fartseer.Components
 
 		public void Init(Vector2 position, float angle)
 		{
-			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(10, 10), "box.png");
+			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(10, 10), "boxAlt");
 			body.IsBullet = true;
+			body.IgnoreGravity = true;
 			double radian = angle * (Math.PI / 180);
 			Vector2 direction = Extensions.RadianToVector((float)radian).ToVector2();
-			body.ApplyLinearImpulse(direction * 10);
+			//Console.WriteLine("{0} {1} {2}", angle, radian, direction);
+			body.ApplyLinearImpulse(direction);
 		}
 	}
 
@@ -54,7 +56,13 @@ namespace Fartseer.Components
 		{
 			projectiles = new List<Projectile>();
 			unusedProjectiles = new List<Projectile>();
+
 			physics = Parent.GetComponent<Physics>();
+			if (physics == null)
+			{
+				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
+				return false;
+			}
 
 			return base.Init();
 		}

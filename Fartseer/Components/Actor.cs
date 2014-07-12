@@ -100,7 +100,13 @@ namespace Fartseer.Components
 		// supposed to be overridden by component
 		public virtual List<ICommand> SetupCommands()
 		{
-			return new List<ICommand>();
+			List<ICommand> commands = new List<ICommand>();
+			commands.Add(CreateMouseCommand(Mouse.Button.Left, true, (a, pos) =>
+			{
+				if (equippedWeapon != null)
+					equippedWeapon.Fire();
+			}));
+			return commands;
 		}
 
 		// these methods provide an easier way to create commands

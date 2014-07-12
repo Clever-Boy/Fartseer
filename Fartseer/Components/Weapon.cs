@@ -14,11 +14,13 @@ namespace Fartseer.Components
 		{
 			get
 			{
-				return ((DrawableGameComponent)Parent).Position;
+				return ((DrawableGameComponent)Parent).Position + offset;
 			}
 		}
 
 		Sprite sprite;
+		Vector2f offset = new Vector2f(16, 0);
+		ProjectileManager projectileManager;
 
 		public Weapon(int initPriority)
 			: base(initPriority)
@@ -28,20 +30,33 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			Texture texture = new Texture(Game.GetComponent<ImageManager>().GetImage("boxAlt"));
-			sprite = new Sprite(texture, new IntRect(0, 0, 16, 16));
-			sprite.Origin = new Vector2f(8, 8);
+			Texture texture = new Texture(Game.GetComponent<ImageManager>().GetImage("raygun"));
+			sprite = new Sprite(texture, new IntRect(0, 0, 70, 70));
+			sprite.Origin = new Vector2f(26, 42); // gun handle
+
+			projectileManager = Game.GetComponent<ProjectileManager>();
+			if (projectileManager == null)
+			{
+				Console.WriteLine("Cannot find ProjectileManager in {0}", Game.GetType().Name);
+				return false;
+			}
 
 			return base.Init();
+		}
+
+		public void Fire()
+		{
+			projectileManager.CreateProjectile((Position + new Vector2f(15, -10)).ToVector2(), sprite.Rotation + 90f);
 		}
 
 		public override void Update(double frametime)
 		{
 			sprite.Position = Position;
 
-			Vector2f mouse = Mouse.GetPosition(Game.Window).ToVector2f();
+			Vector2f mouse = Game.Window.MapPixelToCoords(Mouse.GetPosition(Game.Window));
 			float angle = mouse.AngleBetween(Position);
-			sprite.Rotation = angle * (180f / (float)Math.PI);
+			//Console.WriteLine("{0} {1}", mouse, Position);
+			sprite.Rotation = angle;
 			//Console.WriteLine(sprite.Position);
 
 			base.Update(frametime);

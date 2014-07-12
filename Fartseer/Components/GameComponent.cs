@@ -77,7 +77,7 @@ namespace Fartseer.Components
 		// used by AddComponent, makes sure the component is initialized correctly
 		public bool DoInit(int initIndex)
 		{
-			Console.WriteLine("{0} initializing\n\tInit priority: {1}\n\tInit index: {2}\n\tParent restriction: {3}",
+			Console.WriteLine("{0} initializing\n\tInit priority: {1}, init index: {2}\n\tParent restriction: {3}",
 				this.GetType().Name, initPriority, initIndex, parentRestriction);
 			this.initIndex = initIndex;
 

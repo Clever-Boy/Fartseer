@@ -80,12 +80,12 @@ namespace Fartseer
 		public static Vector2f RadianToVector(float radian)
 		{
 			// http://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
-			return new Vector2f((float)Math.Cos(radian), -(float)Math.Sin(radian));
+			return new Vector2f((float)Math.Sin(radian), -(float)Math.Cos(radian));
 		}
 
 		public static float AngleBetween(this Vector2f vec, Vector2f vec1)
 		{
-			return (float)Math.Atan2(vec.Y - vec1.Y, vec.X - vec1.X);
+			return MathHelper.ToDegrees((float)Math.Atan2(vec.Y - vec1.Y, vec.X - vec1.X));
 		}
 
 		// STRINGS
