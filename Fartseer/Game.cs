@@ -61,16 +61,15 @@ namespace Fartseer
 				Window.Close();
 			};
 
-			if (ContainsComponent<Physics>())
-			{
-				// ground
-				GetComponent<Physics>().CreateBody(BodyType.Static, new Vector2(400, 500), new Vector2(800, 70), "grassMid", true);
-			}
-			else
+			bool failed;
+			Physics physics = GetComponent<Physics>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find Physics in {0}", this.GetType().Name);
 				return false;
 			}
+			// ground
+			physics.CreateBody(BodyType.Static, new Vector2(400, 500), new Vector2(800, 70), "grassMid", true);
 
 			return base.Init();
 		}

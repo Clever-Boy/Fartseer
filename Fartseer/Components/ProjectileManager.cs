@@ -69,8 +69,9 @@ namespace Fartseer.Components
 			projectiles = new List<Projectile>();
 			unusedProjectiles = new List<Projectile>();
 
-			physics = Parent.GetComponent<Physics>();
-			if (physics == null)
+			bool failed;
+			physics = Parent.GetComponent<Physics>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
 				return false;
@@ -88,7 +89,7 @@ namespace Fartseer.Components
 			{
 				proj = unusedProjectiles[0];
 				unusedProjectiles.Remove(proj);
-				Console.WriteLine("Unused projectile found; recreating it (Unused projectiles left: {0})", unusedProjectiles.Count);
+				//Console.WriteLine("Unused projectile found; recreating it (Unused projectiles left: {0})", unusedProjectiles.Count);
 			}
 			else
 			{
@@ -98,12 +99,12 @@ namespace Fartseer.Components
 					projectiles.Remove(proj);
 					unusedProjectiles.Add(proj);
 				};
-				Console.WriteLine("No unused projectiles found; creating a new one");
+				//Console.WriteLine("No unused projectiles found; creating a new one");
 			}
 
 			proj.Init(position, 1f, angle);
 			projectiles.Add(proj);
-			Console.WriteLine("Projectile created (Projectiles: {0})", projectiles.Count);
+			//Console.WriteLine("Projectile created (Projectiles: {0})", projectiles.Count);
 		}
 	}
 }

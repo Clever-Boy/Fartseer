@@ -163,27 +163,42 @@ namespace Fartseer.Components
 
 		public T GetComponent<T>()
 		{
-			List<T> components = GetComponents<T>();
-			if (components.Count < 1)
-				return default(T);
-			return components[0];
+			bool failed;
+			return GetComponent<T>(out failed, (c) => { return true; });
 		}
-		public T GetComponent<T>(Func<GameComponent, bool> condition)
+		public T GetComponent<T>(out bool failed)
 		{
-			List<T> components = GetComponents<T>(condition);
+			// calls GetComponent with condition that will always be true
+			return GetComponent<T>(out failed, (c) => { return true; });
+		}
+		public T GetComponent<T>(out bool failed, Func<GameComponent, bool> condition)
+		{
+			failed = false;
+			List<T> components = GetComponents<T>(out failed, condition);
 			if (components.Count < 1)
+			{
+				failed = true;
 				return default(T);
+			}
 			return components[0];
 		}
+
 		public List<T> GetComponents<T>()
+		{
+			bool failed;
+			return GetComponents<T>(out failed, (c) => { return true; });
+		}
+		public List<T> GetComponents<T>(out bool failed)
+		{
+			return GetComponents<T>(out failed, (c) => { return true; });
+		}
+		public List<T> GetComponents<T>(out bool failed, Func<GameComponent, bool> condition)
 		{
 			// this works since all items in the result list are of type T
 			// else the conversion would fail
-			return Components.FindAll((c) => { return c is T; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); } ));
-		}
-		public List<T> GetComponents<T>(Func<GameComponent, bool> condition)
-		{
-			return Components.FindAll((c) => { return c is T && condition(c) == true; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); }));
+			List<T> components = Components.FindAll((c) => { return c is T && condition(c) == true; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); }));
+			failed = components.Count < 1;
+			return components;
 		}
 
 		public bool ContainsComponent<T>()

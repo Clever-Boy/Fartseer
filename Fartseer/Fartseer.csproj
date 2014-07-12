@@ -65,6 +65,7 @@
     <Compile Include="Components\CenterView.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="Components\EffectManager.cs" />
     <Compile Include="Components\ProjectileManager.cs" />
     <Compile Include="Components\Weapon.cs" />
     <Compile Include="Extensions.cs" />

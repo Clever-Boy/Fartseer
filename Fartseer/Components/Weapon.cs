@@ -30,12 +30,20 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			Texture texture = new Texture(Game.GetComponent<ImageManager>().GetImage("raygun"));
+			bool failed;
+			ImageManager imageManager = Game.GetComponent<ImageManager>(out failed);
+			if (failed)
+			{
+				Console.WriteLine("Cannot find ImageManager in {0}", Game.GetType().Name);
+				return false;
+			}
+
+			Texture texture = new Texture(imageManager.GetImage("raygun"));
 			sprite = new Sprite(texture, new IntRect(0, 0, 70, 70));
 			sprite.Origin = new Vector2f(26, 42); // gun handle
 
-			projectileManager = Game.GetComponent<ProjectileManager>();
-			if (projectileManager == null)
+			projectileManager = Game.GetComponent<ProjectileManager>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find ProjectileManager in {0}", Game.GetType().Name);
 				return false;

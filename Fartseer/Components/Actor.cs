@@ -103,7 +103,7 @@ namespace Fartseer.Components
 		public virtual List<ICommand> SetupCommands()
 		{
 			List<ICommand> commands = new List<ICommand>();
-			commands.Add(CreateMouseCommand(Mouse.Button.Left, true, (a, pos) =>
+			commands.Add(CreateMouseCommand(Mouse.Button.Left, (a, pos) =>
 			{
 				if (equippedWeapon != null)
 					equippedWeapon.Fire();
@@ -138,8 +138,9 @@ namespace Fartseer.Components
 			// maybe not best implementation
 			commands = SetupCommands();
 
-			Physics physics = Parent.GetComponent<Physics>();
-			if (physics == null)
+			bool failed;
+			Physics physics = Parent.GetComponent<Physics>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
 				return false;

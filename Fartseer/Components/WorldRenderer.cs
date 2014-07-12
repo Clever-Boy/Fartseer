@@ -30,8 +30,9 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			physics = Parent.GetComponent<Physics>();
-			if (physics == null)
+			bool failed;
+			physics = Parent.GetComponent<Physics>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
 				return false;

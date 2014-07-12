@@ -49,8 +49,9 @@ namespace Fartseer.Components
 			World = new World(new Vector2(0, 9.82f));
 			ConvertUnits.SetDisplayUnitToSimUnitRatio(32f);
 
-			imageManager = Parent.GetComponent<ImageManager>();
-			if (imageManager == null)
+			bool failed;
+			imageManager = Parent.GetComponent<ImageManager>(out failed);
+			if (failed)
 			{
 				Console.WriteLine("Cannot find ImageManager in {0}", Parent.GetType().Name);
 				return false;

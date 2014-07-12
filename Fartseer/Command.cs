@@ -10,6 +10,7 @@ namespace Fartseer
 {
 	public class KeyboardButtonCommand : ICommand
 	{
+		// TODO: add timed commands
 		public Game Game { get; set; }
 		Keyboard.Key key;
 		Action<Actor> action;
