@@ -18,6 +18,8 @@ namespace Fartseer.Components
 		Body body;
 		Physics physics;
 
+		public event EventHandler OnRemove;
+
 		public Projectile(Physics physics)
 		{
 			this.physics = physics;
@@ -26,17 +28,27 @@ namespace Fartseer.Components
 		public void Remove()
 		{
 			physics.RemoveBody(body);
+
+			if (OnRemove != null)
+				OnRemove(this, EventArgs.Empty);
 		}
 
-		public void Init(Vector2 position, float angle)
+		public void Init(Vector2 position, float offset, float angle)
 		{
 			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(10, 10), "boxAlt");
-			body.IsBullet = true;
-			body.IgnoreGravity = true;
+			//body.IsBullet = true;
+			//body.IgnoreGravity = true;
+			body.OnCollision += (fix1, fix2, contact) =>
+			{
+				//this.Remove();
+				return true;
+			};
+
 			double radian = angle * (Math.PI / 180);
 			Vector2 direction = Extensions.RadianToVector((float)radian).ToVector2();
 			//Console.WriteLine("{0} {1} {2}", angle, radian, direction);
-			body.ApplyLinearImpulse(direction);
+			body.Position += direction * offset;
+			body.ApplyLinearImpulse(direction * 1.5f);
 		}
 	}
 
@@ -76,12 +88,22 @@ namespace Fartseer.Components
 			{
 				proj = unusedProjectiles[0];
 				unusedProjectiles.Remove(proj);
+				Console.WriteLine("Unused projectile found; recreating it (Unused projectiles left: {0})", unusedProjectiles.Count);
 			}
 			else
+			{
 				proj = new Projectile(physics);
+				proj.OnRemove += (s, e) =>
+				{
+					projectiles.Remove(proj);
+					unusedProjectiles.Add(proj);
+				};
+				Console.WriteLine("No unused projectiles found; creating a new one");
+			}
 
-			proj.Init(position, angle);
+			proj.Init(position, 1f, angle);
 			projectiles.Add(proj);
+			Console.WriteLine("Projectile created (Projectiles: {0})", projectiles.Count);
 		}
 	}
 }

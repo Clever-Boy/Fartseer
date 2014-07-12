@@ -19,7 +19,7 @@ namespace Fartseer.Components
 		}
 
 		Sprite sprite;
-		Vector2f offset = new Vector2f(16, 0);
+		public Vector2f offset = new Vector2f(16, 0);
 		ProjectileManager projectileManager;
 
 		public Weapon(int initPriority)
@@ -46,7 +46,7 @@ namespace Fartseer.Components
 
 		public void Fire()
 		{
-			projectileManager.CreateProjectile((Position + new Vector2f(15, -10)).ToVector2(), sprite.Rotation + 90f);
+			projectileManager.CreateProjectile(Position.ToVector2(), sprite.Rotation + 90f);
 		}
 
 		public override void Update(double frametime)
@@ -57,6 +57,7 @@ namespace Fartseer.Components
 			float angle = mouse.AngleBetween(Position);
 			//Console.WriteLine("{0} {1}", mouse, Position);
 			sprite.Rotation = angle;
+			//Console.WriteLine(angle);
 			//Console.WriteLine(sprite.Position);
 
 			base.Update(frametime);

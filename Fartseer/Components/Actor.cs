@@ -84,6 +84,8 @@ namespace Fartseer.Components
 			}
 			AddComponent(weapon);
 			equippedWeapon = weapon;
+
+
 		}
 
 		public void UnequipWeapon()
