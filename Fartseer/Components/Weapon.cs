@@ -22,10 +22,11 @@ namespace Fartseer.Components
 		public Vector2f offset = new Vector2f(16, 0);
 		ProjectileManager projectileManager;
 
+		Random rand;
+
 		public Weapon(int initPriority)
 			: base(initPriority)
 		{
-
 		}
 
 		protected override bool Init()
@@ -49,12 +50,15 @@ namespace Fartseer.Components
 				return false;
 			}
 
+			rand = new Random();
+
 			return base.Init();
 		}
 
 		public void Fire()
 		{
-			projectileManager.CreateProjectile(Position.ToVector2(), sprite.Rotation + 90f);
+			int spread = rand.Next(-8, 8);
+			projectileManager.CreateProjectile(Position.ToVector2(), sprite.Rotation + 90f + spread);
 		}
 
 		public override void Update(double frametime)

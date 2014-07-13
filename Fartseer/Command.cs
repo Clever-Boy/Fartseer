@@ -8,77 +8,69 @@ using Fartseer.Components;
 
 namespace Fartseer
 {
-	public class KeyboardButtonCommand : ICommand
+	public enum CommandType
 	{
-		// TODO: add timed commands
-		public Game Game { get; set; }
-		Keyboard.Key key;
-		Action<Actor> action;
-		bool once = false; // once means the previous execution has to have failed for the next execution to succeed
-		bool prev = false;
-
-		public KeyboardButtonCommand(Keyboard.Key key, Action<Actor> action)
-		{
-			this.key = key;
-			this.action = action;
-		}
-		public KeyboardButtonCommand(Keyboard.Key key, bool once, Action<Actor> action)
-			: this(key, action)
-		{
-			this.once = once;
-		}
-
-		public bool TryExecute(Actor target)
-		{
-			bool result = false;
-			if (Keyboard.IsKeyPressed(key))
-			{
-				//Console.WriteLine("{0} {1}", once, prev);
-				if (!once || (once && !prev))
-				{
-					action(target);
-					result = true;
-				}
-				prev = true;
-			}
-			else
-				prev = false;
-
-			return result;
-		}
+		Continuous,
+		Once,
+		Timed
 	}
 
-	public class MouseButtonCommand : ICommand
+	public class Command
 	{
 		public Game Game { get; set; }
-		Mouse.Button button;
-		Action<Actor, Vector2i> action;
-		bool once = false; // see above
+		public CommandType Type { get; set; }
+
+		public CommandAction action;
+		public ICommandCondition condition;
+
+		// for Type.Once
 		bool prev = false;
 
-		public MouseButtonCommand(Mouse.Button button, Action<Actor, Vector2i> action)
+		// for Type.Timed
+		double timer = 0;
+		protected double max;
+		
+		public Command(CommandType type, ICommandCondition condition, CommandAction action, double timerMax = 1000)
 		{
-			this.button = button;
+			this.Type = type;
+			this.condition = condition;
 			this.action = action;
+			this.max = timerMax;
 		}
-		public MouseButtonCommand(Mouse.Button button, bool once, Action<Actor, Vector2i> action)
-			: this(button, action)
+		
+		public bool TryExecute(Actor actor, double frametime)
 		{
-			this.once = once;
-		}
-
-		public bool TryExecute(Actor target)
-		{
+			bool cond = condition.Check();
 			bool result = false;
-			if (Mouse.IsButtonPressed(button))
+			if (cond)
 			{
-				//Console.WriteLine("{0} {1}", once, prev);
-				if (!once || (once && !prev)) 
+				switch (Type)
 				{
-					action(target, Mouse.GetPosition(Game.Window));
-					result = true;
+					case CommandType.Once:
+						//Console.WriteLine(prev);
+						if (!prev)
+						{
+							action.Run(actor);
+							result = true;
+						}
+						prev = true;
+						break;
+
+					case CommandType.Continuous:
+						action.Run(actor);
+						result = true;
+						break;
+
+					case CommandType.Timed:
+						timer += frametime;
+						if (timer >= max)
+						{
+							timer = 0;
+							action.Run(actor);
+							result = true;
+						}
+						break;
 				}
-				prev = true;
 			}
 			else
 				prev = false;

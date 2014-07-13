@@ -42,7 +42,7 @@ namespace Fartseer.Components
 		public int Health { get; private set; }
 		public int MaxHealth { get; private set; }
 
-		List<ICommand> commands;
+		List<Command> commands;
 		protected Body body;
 		Weapon equippedWeapon;
 
@@ -84,8 +84,6 @@ namespace Fartseer.Components
 			}
 			AddComponent(weapon);
 			equippedWeapon = weapon;
-
-
 		}
 
 		public void UnequipWeapon()
@@ -100,10 +98,10 @@ namespace Fartseer.Components
 		}
 
 		// supposed to be overridden by component
-		public virtual List<ICommand> SetupCommands()
+		public virtual List<Command> SetupCommands()
 		{
-			List<ICommand> commands = new List<ICommand>();
-			commands.Add(CreateMouseCommand(Mouse.Button.Left, (a, pos) =>
+			List<Command> commands = new List<Command>();
+			commands.Add(CreateMouseCommand(CommandType.Continuous, Mouse.Button.Left, (a, pos) =>
 			{
 				if (equippedWeapon != null)
 					equippedWeapon.Fire();
@@ -112,23 +110,15 @@ namespace Fartseer.Components
 		}
 
 		// these methods provide an easier way to create commands
-		protected ICommand CreateKeyboardCommand(Keyboard.Key key, Action<Actor> action)
+		protected Command CreateKeyboardCommand(CommandType type, Keyboard.Key key, Action<Actor> action, double timerMax = 1000)
 		{
-			return CreateKeyboardCommand(key, false, action);
-		}
-		protected ICommand CreateKeyboardCommand(Keyboard.Key key, bool once, Action<Actor> action)
-		{
-			KeyboardButtonCommand cmd = new KeyboardButtonCommand(key, once, action);
+			Command cmd = new Command(type, new KeyboardCondition(key), new KeyboardAction(action, Game), timerMax);
 			cmd.Game = Game;
 			return cmd;
 		}
-		protected ICommand CreateMouseCommand(Mouse.Button button, Action<Actor, Vector2i> action)
+		protected Command CreateMouseCommand(CommandType type, Mouse.Button button, Action<Actor, Vector2i> action, double timerMax = 1000)
 		{
-			return CreateMouseCommand(button, false, action);
-		}
-		protected ICommand CreateMouseCommand(Mouse.Button button, bool once, Action<Actor, Vector2i> action)
-		{
-			MouseButtonCommand cmd = new MouseButtonCommand(button, once, action);
+			Command cmd = new Command(type, new MouseCondition(button), new MouseAction(action, Game), timerMax);
 			cmd.Game = Game;
 			return cmd;
 		}
@@ -158,8 +148,8 @@ namespace Fartseer.Components
 
 		public override void Update(double frametime)
 		{
-			foreach (ICommand cmd in commands)
-				cmd.TryExecute(this);
+			foreach (Command cmd in commands)
+				cmd.TryExecute(this, Game.Frametime);
 
 			base.Update(frametime);
 		}

@@ -40,9 +40,9 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public override List<ICommand> SetupCommands()
+		public override List<Command> SetupCommands()
 		{
-			List<ICommand> commands = base.SetupCommands();
+			List<Command> commands = base.SetupCommands();
 
 			bool failed;
 			EffectManager effectManager = Parent.GetComponent<EffectManager>(out failed);
@@ -52,10 +52,10 @@ namespace Fartseer.Components
 				return null;
 			}
 
-			commands.Add(CreateKeyboardCommand(Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
-			commands.Add(CreateKeyboardCommand(Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
-			commands.Add(CreateKeyboardCommand(Keyboard.Key.Space, true, (a) => a.Move(MoveDirection.Jump, 7)));
-			commands.Add(CreateKeyboardCommand(Keyboard.Key.E, true, (a) => { effectManager.Explode(Position, 10f, 50f, this.body); }));
+			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
+			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
+			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.Space, (a) => a.Move(MoveDirection.Jump, 7)));
+			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.E, (a) => { effectManager.Explode(Position, 10f, 50f, this.body); }));
 
 			return commands;
 		}

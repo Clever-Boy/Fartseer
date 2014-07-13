@@ -48,7 +48,7 @@ namespace Fartseer.Components
 			Vector2 direction = Extensions.RadianToVector((float)radian).ToVector2();
 			//Console.WriteLine("{0} {1} {2}", angle, radian, direction);
 			body.Position += direction * offset;
-			body.ApplyLinearImpulse(direction * 1.5f);
+			body.ApplyLinearImpulse(direction * 1f);
 		}
 	}
 
