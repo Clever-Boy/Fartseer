@@ -24,6 +24,7 @@ namespace Fartseer
 
 		VideoMode videoMode;
 		string title;
+		Color bgColor;
 
 		public Game(VideoMode videoMode, string title)
 			: base(0)
@@ -62,6 +63,8 @@ namespace Fartseer
 				Window.Close();
 			};
 
+			bgColor = new Color(100, 149, 237);
+
 			bool failed;
 			Physics physics = GetComponent<Physics>(out failed);
 			if (failed)
@@ -99,7 +102,7 @@ namespace Fartseer
 
 				Window.DispatchEvents();
 
-				Window.Clear(Color.Transparent);
+				Window.Clear(bgColor);
 				//RTexture.Clear(Color.Transparent);
 
 				Update(Frametime);
