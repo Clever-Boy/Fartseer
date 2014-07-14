@@ -171,7 +171,7 @@ namespace Fartseer.Components
 			// calls GetComponent with condition that will always be true
 			return GetComponent<T>(out failed, (c) => { return true; });
 		}
-		public T GetComponent<T>(out bool failed, Func<GameComponent, bool> condition)
+		public T GetComponent<T>(out bool failed, Func<T, bool> condition)
 		{
 			failed = false;
 			List<T> components = GetComponents<T>(out failed, condition);
@@ -192,11 +192,11 @@ namespace Fartseer.Components
 		{
 			return GetComponents<T>(out failed, (c) => { return true; });
 		}
-		public List<T> GetComponents<T>(out bool failed, Func<GameComponent, bool> condition)
+		public List<T> GetComponents<T>(out bool failed, Func<T, bool> condition)
 		{
 			// this works since all items in the result list are of type T
 			// else the conversion would fail
-			List<T> components = Components.FindAll((c) => { return c is T && condition(c) == true; }).ConvertAll(new Converter<GameComponent, T>((t) => { return (T)Convert.ChangeType(t, typeof(T)); }));
+			List<T> components = Components.OfType<T>().Where(c => condition(c)).ToList();
 			failed = components.Count < 1;
 			return components;
 		}
