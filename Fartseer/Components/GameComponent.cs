@@ -161,17 +161,17 @@ namespace Fartseer.Components
 			Parent.RemoveComponent(this);
 		}
 
-		public T GetComponent<T>()
+		public T GetComponent<T>() where T : GameComponent
 		{
 			bool failed;
 			return GetComponent<T>(out failed, (c) => { return true; });
 		}
-		public T GetComponent<T>(out bool failed)
+		public T GetComponent<T>(out bool failed) where T : GameComponent
 		{
 			// calls GetComponent with condition that will always be true
 			return GetComponent<T>(out failed, (c) => { return true; });
 		}
-		public T GetComponent<T>(out bool failed, Func<T, bool> condition)
+		public T GetComponent<T>(out bool failed, Func<T, bool> condition) where T : GameComponent
 		{
 			failed = false;
 			List<T> components = GetComponents<T>(out failed, condition);
@@ -183,16 +183,16 @@ namespace Fartseer.Components
 			return components[0];
 		}
 
-		public List<T> GetComponents<T>()
+		public List<T> GetComponents<T>() where T: GameComponent
 		{
 			bool failed;
 			return GetComponents<T>(out failed, (c) => { return true; });
 		}
-		public List<T> GetComponents<T>(out bool failed)
+		public List<T> GetComponents<T>(out bool failed) where T : GameComponent
 		{
 			return GetComponents<T>(out failed, (c) => { return true; });
 		}
-		public List<T> GetComponents<T>(out bool failed, Func<T, bool> condition)
+		public List<T> GetComponents<T>(out bool failed, Func<T, bool> condition) where T : GameComponent
 		{
 			// this works since all items in the result list are of type T
 			// else the conversion would fail
@@ -201,7 +201,7 @@ namespace Fartseer.Components
 			return components;
 		}
 
-		public bool ContainsComponent<T>()
+		public bool ContainsComponent<T>() where T : GameComponent
 		{
 			// source: http://stackoverflow.com/questions/8216881/how-do-i-check-if-a-list-contains-an-object-of-a-certain-type-c-sharp
 			return Components.OfType<T>().Any();
