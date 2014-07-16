@@ -79,13 +79,15 @@ namespace Fartseer
 
 			bgColor = new Color(100, 149, 237);
 
-			bool failed;
-			Physics physics = GetComponent<Physics>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<Physics>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find Physics in {0}", this.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			Physics physics = result.Get<Physics>();
 			// ground
 			physics.CreateBody(BodyType.Static, new Vector2(400, 500), new Vector2(800, 70), "grassMid", true);
 

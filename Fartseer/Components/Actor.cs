@@ -128,13 +128,15 @@ namespace Fartseer.Components
 			// TODO: add fail detection to SetupCommands
 			commands = SetupCommands();
 
-			bool failed;
-			Physics physics = Parent.GetComponent<Physics>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<Physics>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			Physics physics = result.Get<Physics>();
 			body = SetupBody(physics);
 
 			return base.Init();

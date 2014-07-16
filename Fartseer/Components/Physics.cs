@@ -63,13 +63,15 @@ namespace Fartseer.Components
 			World = new World(new Vector2(0, 9.82f));
 			ConvertUnits.SetDisplayUnitToSimUnitRatio(32f);
 
-			bool failed;
-			imageManager = Parent.GetComponent<ImageManager>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<ImageManager>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find ImageManager in {0}", Parent.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Game.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			imageManager = result.Get<ImageManager>();
 
 			return base.Init();
 		}

@@ -37,13 +37,14 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			bool failed = false;
-			particleManager = Game.GetComponent<ParticleManager>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<ParticleManager>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find ParticleManager in {0}", Game.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Game.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+			particleManager = result.Get<ParticleManager>();
 
 			return base.Init();
 		}

@@ -34,6 +34,16 @@ namespace Fartseer.Components
 		}
 	}
 
+	public class ComponentFindResult
+	{
+		public bool Failed { get; set; }
+		public List<string> FailedComponents { get; set; }
+
+		public ComponentFindResult()
+		{
+		}
+	}
+
 	public abstract class GameComponent
 	{
 		public bool Enabled { get; set; }
@@ -173,32 +183,44 @@ namespace Fartseer.Components
 		}
 		public T GetComponent<T>(out bool failed, Func<T, bool> condition) where T : GameComponent
 		{
-			failed = false;
-			List<T> components = GetComponents<T>(out failed, condition);
-			if (components.Count < 1)
-			{
-				failed = true;
-				return default(T);
-			}
-			return components[0];
+			T component = Components.Find(c => c is T && condition(c as T)) as T;
+			failed = component == null;
+			return component;
 		}
 
-		public List<T> GetComponents<T>() where T: GameComponent
+		public List<GameComponent> GetComponents(ComponentList components)
 		{
-			bool failed;
-			return GetComponents<T>(out failed, (c) => { return true; });
+			ComponentFindResult result;
+			return GetComponents(components, out result, c => true);
 		}
-		public List<T> GetComponents<T>(out bool failed) where T : GameComponent
+		public List<GameComponent> GetComponents(ComponentList components, out ComponentFindResult result)
 		{
-			return GetComponents<T>(out failed, (c) => { return true; });
+			return GetComponents(components, out result, c => true);
 		}
-		public List<T> GetComponents<T>(out bool failed, Func<T, bool> condition) where T : GameComponent
+		public List<GameComponent> GetComponents(ComponentList components, out ComponentFindResult result, Func<GameComponent, bool> condition)
 		{
-			// this works since all items in the result list are of type T
-			// else the conversion would fail
-			List<T> components = Components.OfType<T>().Where(c => condition(c)).ToList();
-			failed = components.Count < 1;
-			return components;
+			result = new ComponentFindResult();
+			result.Failed = false;
+			result.FailedComponents = new List<string>();
+			List<GameComponent> list = Components.FindAll((c) =>
+			{
+				if (!components.Contains(c.GetType()))
+					return false;
+
+				if (!condition(c))
+					return false;
+
+				return true;
+			});
+
+			foreach (Type t in components.GetReadOnlyList())
+				if (!list.Any(c => c.GetType() == t))
+				{
+					result.FailedComponents.Add(t.Name);
+					result.Failed = true;
+				}
+
+			return list;
 		}
 
 		public bool ContainsComponent<T>() where T : GameComponent

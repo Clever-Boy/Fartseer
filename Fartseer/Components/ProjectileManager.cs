@@ -69,13 +69,15 @@ namespace Fartseer.Components
 			projectiles = new List<Projectile>();
 			unusedProjectiles = new List<Projectile>();
 
-			bool failed;
-			physics = Parent.GetComponent<Physics>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<Physics>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			physics = result.Get<Physics>();
 
 			return base.Init();
 		}

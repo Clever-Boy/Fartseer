@@ -43,20 +43,16 @@ namespace Fartseer.Components
 		{
 			List<Command> commands = base.SetupCommands();
 
-			bool failed;
-			EffectManager effectManager = Parent.GetComponent<EffectManager>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<EffectManager>().Add<Physics>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find EffectManager in {0}", Parent.GetType().Name);
-				return null;
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
+				return commands;
 			}
 
-			Physics physics = Parent.GetComponent<Physics>(out failed);
-			if (failed)
-			{
-				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
-				return null;
-			}
+			EffectManager effectManager = result.Get<EffectManager>();
+			Physics physics = result.Get<Physics>();
 
 			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
 			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));

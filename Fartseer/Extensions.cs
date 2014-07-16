@@ -115,5 +115,10 @@ namespace Fartseer
 					return false;
 			}
 		}
+
+		public static T Get<T>(this List<GameComponent> list) where T : GameComponent
+		{
+			return (T)list.Find(o => o is T);
+		}
 	}
 }

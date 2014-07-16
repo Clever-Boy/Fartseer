@@ -104,13 +104,15 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			bool failed = false;
-			imageManager = Game.GetComponent<ImageManager>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<ImageManager>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find ImageManager in {0}", Game.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Game.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			imageManager = result.Get<ImageManager>();
 
 			particles = new List<Particle>();
 

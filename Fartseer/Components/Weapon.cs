@@ -37,38 +37,23 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			bool failed;
-			ImageManager imageManager = Game.GetComponent<ImageManager>(out failed);
-			if (failed)
+			ComponentFindResult findResult;
+			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<ImageManager>().Add<ProjectileManager>().Add<Physics>().Add<WorldRenderer>(), out findResult);
+			if (findResult.Failed)
 			{
-				Console.WriteLine("Cannot find ImageManager in {0}", Game.GetType().Name);
+				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
 				return false;
 			}
+
+			ImageManager imageManager = result.Get<ImageManager>();
 
 			Texture texture = imageManager.GetTexture("raygun");
 			sprite = new Sprite(texture, new IntRect(0, 0, 70, 70));
 			sprite.Origin = new Vector2f(26, 42); // gun handle
 
-			projectileManager = Game.GetComponent<ProjectileManager>(out failed);
-			if (failed)
-			{
-				Console.WriteLine("Cannot find ProjectileManager in {0}", Game.GetType().Name);
-				return false;
-			}
-
-			physics = Game.GetComponent<Physics>(out failed);
-			if (failed)
-			{
-				Console.WriteLine("Cannot find Physics in {0}", Game.GetType().Name);
-				return false;
-			}
-
-			worldRenderer = Game.GetComponent<WorldRenderer>(out failed);
-			if (failed)
-			{
-				Console.WriteLine("Cannot find WorldRenderer in {0}", Game.GetType().Name);
-				return false;
-			}
+			projectileManager = result.Get<ProjectileManager>();
+			physics = result.Get<Physics>();
+			worldRenderer = result.Get<WorldRenderer>();
 
 			rand = new Random();
 
