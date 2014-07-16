@@ -10,12 +10,22 @@ namespace Fartseer.Components
 {
 	public class ParticleSpawner : DrawableGameComponent
 	{
+		public override Vector2f Position
+		{
+			get
+			{
+				// WOW WHY DIDN'T I KNOW OF THAT 'as'!
+				return (Parent as DrawableGameComponent).Position;
+			}
+		}
+
 		public bool Active { get; private set; }
 
 		ParticleManager particleManager;
 
 		double particleLifetime;
 		Vector2f particleVelocity;
+		Vector2f particleSize;
 		float particleAngularVelocity;
 		string particleTextureName;
 
@@ -38,8 +48,9 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public void Activate(double lifetime, Vector2f velocity, float angularVelocity, string texturename)
+		public void Activate(Vector2f size, Vector2f velocity, double lifetime, float angularVelocity, string texturename)
 		{
+			particleSize = size;
 			particleLifetime = lifetime;
 			particleTextureName = texturename;
 			particleVelocity = velocity;
@@ -59,18 +70,19 @@ namespace Fartseer.Components
 			if (!Active)
 				return;
 
-			SpawnOneParticle(particleLifetime, particleVelocity, particleAngularVelocity, particleTextureName);
+			SpawnOneParticle(particleSize, particleVelocity, particleTextureName, particleLifetime, particleAngularVelocity);
 		}
 
-		public void SpawnOneParticle(double lifetime, Vector2f velocity, float angularVelocity, string textureName)
+		public void SpawnOneParticle(Vector2f size, Vector2f velocity, string textureName, double lifetime = 1000, float angularVelocity = 0f)
 		{
-			particleManager.CreateParticle(lifetime, velocity, angularVelocity, textureName);
+			//Console.WriteLine("Spawning one particle at {0}", Position);
+			particleManager.CreateParticle(Position, size, velocity, textureName, lifetime, angularVelocity);
 		}
 
-		public void SpawnMultipleParticles(int count, double lifetime, Vector2f velocity, float angularVelocity, string textureName)
+		public void SpawnMultipleParticles(int count, Vector2f size, Vector2f velocity, string textureName, double lifetime = 1000, float angularVelocity = 0f)
 		{
 			for (int i = 0; i < count; i++)
-				SpawnOneParticle(lifetime, velocity, angularVelocity, textureName);
+				SpawnOneParticle(size, velocity, textureName, lifetime, angularVelocity);
 		}
 	}
 }

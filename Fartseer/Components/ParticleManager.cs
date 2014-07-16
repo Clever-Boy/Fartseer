@@ -14,15 +14,16 @@ namespace Fartseer.Components
 
 		Texture texture;
 		Vector2f size;
+		Vector2f offset;
 		List<Vertex> verts;
-		float angle;
+		Color color;
 
 		double lifetimer;
 		double lifetime;
 		Vector2f velocity;
 		float angularVelocity;
 
-		public Particle(double lifetime, Vector2f velocity, float angularVelocity, string textureName, ImageManager imageManager)
+		public Particle(Vector2f position, Vector2f size, ImageManager imageManager, string textureName, Vector2f velocity, double lifetime = 1000, float angularVelocity = 0f)
 		{
 			if (imageManager.ImageExists(textureName))
 				texture = imageManager.GetTexture(textureName);
@@ -30,24 +31,29 @@ namespace Fartseer.Components
 				Console.WriteLine("ImageManager doesn't contain image \"{0}\"", textureName);
 
 			Alive = true;
+
+			this.Position = position;
+			this.size = size;
+			this.offset = size / 2;
 			this.lifetime = lifetime;
 			this.velocity = velocity;
 			this.angularVelocity = angularVelocity;
+
+			color = new Color(255, 255, 255, 255);
 			lifetimer = 0;
 
-			size = new Vector2f(texture.Size.X, texture.Size.Y);
-
+			verts = new List<Vertex>();
 			CreateVertices();
 		}
 
 		public void CreateVertices()
 		{
-			verts = new List<Vertex>();
+			verts.Clear();
 
-			verts.Add(new Vertex(Position, new Vector2f(0, 0)));
-			verts.Add(new Vertex(Position + new Vector2f(size.X, 0), new Vector2f(texture.Size.X, 0)));
-			verts.Add(new Vertex(Position + size, new Vector2f(texture.Size.X, texture.Size.Y)));
-			verts.Add(new Vertex(Position + new Vector2f(0, size.Y), new Vector2f(0, texture.Size.Y)));
+			verts.Add(new Vertex(new Vector2f(0, 0), color, new Vector2f(0, 0)));
+			verts.Add(new Vertex(new Vector2f(size.X, 0), color, new Vector2f(texture.Size.X, 0)));
+			verts.Add(new Vertex(size, color, new Vector2f(texture.Size.X, texture.Size.Y)));
+			verts.Add(new Vertex(new Vector2f(0, size.Y), color, new Vector2f(0, texture.Size.Y)));
 		}
 
 		public void Update(double frametime)
@@ -56,14 +62,19 @@ namespace Fartseer.Components
 				return;
 
 			Position += velocity;
-			angle += angularVelocity;
+
+			Transform.Rotate(angularVelocity);
+
+			double ratio = lifetimer / lifetime;
+			color.A = (byte)(255 - (255 * ratio));
+			CreateVertices();
 
 			lifetimer += frametime;
 			if (lifetimer >= lifetime)
 			{
 				lifetimer = 0;
 				Alive = false;
-				Console.WriteLine("Particle died");
+				//Console.WriteLine("Particle died");
 			}
 		}
 
@@ -73,6 +84,8 @@ namespace Fartseer.Components
 				return;
 
 			states.Texture = texture;
+			states.Transform *= Transform;
+	
 			target.Draw(verts.ToArray(), PrimitiveType.Quads, states);
 		}
 	}
@@ -113,10 +126,10 @@ namespace Fartseer.Components
 			return particle;
 		}
 
-		public void CreateParticle(double lifetime, Vector2f velocity, float angularVelocity, string textureName)
+		public void CreateParticle(Vector2f position, Vector2f size, Vector2f velocity, string textureName, double lifetime = 1000, float angularVelocity = 0f)
 		{
 			Particle particle = GetNewOrUnusedParticle();
-			particle = new Particle(lifetime, velocity, angularVelocity, textureName, imageManager);
+			particle = new Particle(position, size, imageManager, textureName, velocity, lifetime, angularVelocity);
 			particles.Add(particle);
 		}
 

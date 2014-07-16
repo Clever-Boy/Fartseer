@@ -63,6 +63,9 @@ namespace Fartseer.Components
 			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.Space, (a) => a.Move(MoveDirection.Jump, 7)));
 			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.E, (a) => { effectManager.Explode(Position, 5f, 1f); }));
 
+			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.R, (a) =>
+			{ this.GetComponent<ParticleSpawner>().SpawnOneParticle(new Vector2f(16, 16), new Vector2f(0, 0), "boxAlt", 1000, 10f); }));
+
 			commands.Add(CreateMouseCommand(CommandType.Once, Mouse.Button.Right, (a, pos) =>
 			{ physics.CreateBody(BodyType.Dynamic, Game.Window.MapPixelToCoords(pos).ToVector2(), new Vector2(32, 32), "boxAlt"); }));
 
