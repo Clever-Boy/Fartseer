@@ -65,6 +65,14 @@ namespace Fartseer.Components
 			return null;
 		}
 
+		public bool TextureExists(string name)
+		{
+			if (!images.ContainsKey(name))
+				return false;
+
+			return textures.ContainsKey(images[name]);
+		}
+
 		public bool ImageExists(string name)
 		{
 			return images.ContainsKey(name);
