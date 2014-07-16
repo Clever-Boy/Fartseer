@@ -38,27 +38,11 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public void Explode(Vector2f position, float radius, float power, params Body[] ignoreBodies) // position and radius are in sim units
+		public void Explode(Vector2f position, float radius, float power) // position and radius are in sim units
 		{
-			// source: https://farseerphysics.codeplex.com/discussions/224372
 			//Console.WriteLine("BOOM!");
-			Vector2 pos = ConvertUnits.ToSimUnits(position.ToVector2());
-			foreach (Body body in physics.World.BodyList)
-			{
-				if (ignoreBodies.Contains(body))
-					continue;
-
-				Vector2 dist = body.Position - pos;
-				float length = dist.Length();
-				if (length <= radius)
-				{
-					float force = (radius - length) * power;
-					Vector2 forceVector = Vector2.Normalize(dist);
-					forceVector *= force;
-
-					body.ApplyForce(forceVector);
-				}
-			}
+			RealExplosion explosion = new RealExplosion(physics.World);
+			explosion.Activate(ConvertUnits.ToSimUnits(position.ToVector2()), radius, power);
 		}
 	}
 }
