@@ -48,16 +48,11 @@ namespace Fartseer.Components
 		// returns the first unused shape and removes it from the shapes list to prepare it for re-addition
 		WorldShape GetNewOrUnusedShape()
 		{
-			WorldShape shape;
+			WorldShape shape = null;
 			if ((shape = shapes.Find(s => !s.Alive)) != null)
-			{
-				//Console.WriteLine("Unused shape found");
 				shapes.Remove(shape);
-				return shape;
-			}
 
-			//Console.WriteLine("No unused shape found");
-			return null;
+			return shape;
 		}
 
 		public void AddLine(Vector2f start, Vector2f end, Color color, double lifetime)
