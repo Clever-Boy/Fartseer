@@ -19,6 +19,7 @@ namespace Fartseer.Components
 			}
 		}
 		public bool IsRaycast { get; set; }
+		public int MaxSpread { get; set; }
 
 		Sprite sprite;
 		public Vector2f offset = new Vector2f(16, 0);
@@ -70,28 +71,33 @@ namespace Fartseer.Components
 			}
 
 			rand = new Random();
+
 			IsRaycast = true;
+			MaxSpread = 8;
 
 			return base.Init();
 		}
 
 		public void Fire()
 		{
-			int spread = rand.Next(-800, 800) / 100;
+			int spread = rand.Next(-MaxSpread, MaxSpread);
 			if (!IsRaycast)
 				projectileManager.CreateProjectile(Position.ToVector2(), sprite.Rotation + 90f + spread);
 			else
 			{
 				Vector2f dir = Extensions.RadianToVector((sprite.Rotation + 90f + spread) * ((float)Math.PI / 180));
 				Vector2f end = dir * 400f;
-				worldRenderer.AddLine(Position, Position + end, Color.Red, 100);
 
 				List<RayInfo> hits = physics.Raycast(Position.ToVector2(), (Position + end).ToVector2());
 				//Console.WriteLine(hits.Count);
+
+				Vector2f lineEnd = Position + end;
 				foreach (RayInfo hit in hits)
 				{
-					hit.fixture.Body.ApplyLinearImpulse(-hit.normal * 5f);
+					hit.fixture.Body.ApplyLinearImpulse(dir.ToVector2() * 5f);
+					lineEnd = FarseerPhysics.ConvertUnits.ToDisplayUnits(hit.point).ToVector2f();
 				}
+				worldRenderer.AddLine(Position, lineEnd, Color.Red, 500);
 			}
 		}
 

@@ -101,11 +101,11 @@ namespace Fartseer.Components
 		public virtual List<Command> SetupCommands()
 		{
 			List<Command> commands = new List<Command>();
-			commands.Add(CreateMouseCommand(CommandType.Once, Mouse.Button.Left, (a, pos) =>
+			commands.Add(CreateMouseCommand(CommandType.Continuous, Mouse.Button.Left, (a, pos) =>
 			{
 				if (equippedWeapon != null)
 					equippedWeapon.Fire();
-			}));
+			}, 50));
 			return commands;
 		}
 
