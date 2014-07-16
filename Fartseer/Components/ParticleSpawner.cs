@@ -18,16 +18,18 @@ namespace Fartseer.Components
 		double lifetimer;
 		double lifetime;
 
-		public Particle(double lifetime, string textureName, ImageManager imgManager)
+		public Particle(double lifetime, string textureName, ImageManager imageManager)
 		{
-			if (imgManager.ImageExists(textureName))
-				texture = new Texture(imgManager.GetImage(textureName));
+			if (imageManager.ImageExists(textureName))
+				texture = imageManager.GetTexture(textureName);
 			else
 				Console.WriteLine("ImageManager doesn't contain image \"{0}\"", textureName);
 
 			Alive = true;
 			this.lifetime = lifetime;
 			lifetimer = 0;
+
+			size = new Vector2f(texture.Size.X, texture.Size.Y);
 		}
 
 		public void CreateVertices()
@@ -66,9 +68,9 @@ namespace Fartseer.Components
 
 	public class ParticleSpawner : DrawableGameComponent
 	{
-		public void Active { get; private set; }
+		public bool Active { get; private set; }
 
-		ImageManager imgManager;
+		ImageManager imageManager;
 		ParticleManager particleManager;
 
 		double particleLifetime;
@@ -83,7 +85,7 @@ namespace Fartseer.Components
 		protected override bool Init()
 		{
 			bool failed = false;
-			imgManager = Game.GetComponent<ImageManager>(out failed);
+			imageManager = Game.GetComponent<ImageManager>(out failed);
 			if (failed)
 			{
 				Console.WriteLine("Cannot find ImageManager in {0}", Game.GetType().Name);

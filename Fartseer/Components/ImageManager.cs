@@ -11,6 +11,7 @@ namespace Fartseer.Components
 	public class ImageManager : GameComponent
 	{
 		Dictionary<string, Image> images;
+		Dictionary<Image, Texture> textures;
 
 		public ImageManager()
 			: this(0)
@@ -25,6 +26,7 @@ namespace Fartseer.Components
 		protected override bool Init()
 		{
 			images = new Dictionary<string, Image>();
+			textures = new Dictionary<Image, Texture>();
 
 			string path = "texture";
 			string[] files = Directory.GetFiles(path, "*.png");
@@ -37,6 +39,22 @@ namespace Fartseer.Components
 			}
 
 			return base.Init();
+		}
+
+		public Texture GetTexture(string name)
+		{
+			if (!ImageExists(name))
+				return null;
+
+			if (!textures.ContainsKey(images[name]))
+			{
+				Image img = images[name];
+				Texture texture = new Texture(img);
+				textures.Add(img, texture);
+				return texture;
+			}
+			else
+				return textures[images[name]];
 		}
 
 		public Image GetImage(string name)

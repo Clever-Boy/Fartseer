@@ -45,7 +45,7 @@ namespace Fartseer.Components
 				return false;
 			}
 
-			Texture texture = new Texture(imageManager.GetImage("raygun"));
+			Texture texture = imageManager.GetTexture("raygun");
 			sprite = new Sprite(texture, new IntRect(0, 0, 70, 70));
 			sprite.Origin = new Vector2f(26, 42); // gun handle
 

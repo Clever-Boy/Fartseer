@@ -103,7 +103,7 @@ namespace Fartseer.Components
 				Console.WriteLine("Cannot create {0} body, texture \"{1}\" does not exist", type.ToString().ToLower(), textureName);
 				return null;
 			}
-			Texture texture = new Texture(imageManager.GetImage(textureName));
+			Texture texture = imageManager.GetTexture(textureName);
 			texture.Repeated = textureRepeat;
 
 			BodyInfo info = new BodyInfo();
