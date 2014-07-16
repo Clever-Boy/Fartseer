@@ -8,90 +8,26 @@ using SFML.Window;
 
 namespace Fartseer.Components
 {
-	public class Particle : Transformable, Drawable
-	{
-		public bool Alive { get; set; }
-
-		Texture texture;
-		Vector2f size;
-		List<Vertex> verts;
-		double lifetimer;
-		double lifetime;
-
-		public Particle(double lifetime, string textureName, ImageManager imageManager)
-		{
-			if (imageManager.ImageExists(textureName))
-				texture = imageManager.GetTexture(textureName);
-			else
-				Console.WriteLine("ImageManager doesn't contain image \"{0}\"", textureName);
-
-			Alive = true;
-			this.lifetime = lifetime;
-			lifetimer = 0;
-
-			size = new Vector2f(texture.Size.X, texture.Size.Y);
-		}
-
-		public void CreateVertices()
-		{
-			verts = new List<Vertex>();
-
-			verts.Add(new Vertex(Position, new Vector2f(0, 0)));
-			verts.Add(new Vertex(Position + new Vector2f(size.X, 0), new Vector2f(texture.Size.X, 0)));
-			verts.Add(new Vertex(Position + size, new Vector2f(texture.Size.X, texture.Size.Y)));
-			verts.Add(new Vertex(Position + new Vector2f(0, size.Y), new Vector2f(0, texture.Size.Y)));
-		}
-
-		public void Update(double frametime)
-		{
-			if (!Alive)
-				return;
-
-			lifetimer += frametime;
-			if (lifetimer >= lifetime)
-			{
-				lifetimer = 0;
-				Alive = false;
-				Console.WriteLine("Particle died");
-			}
-		}
-
-		public void Draw(RenderTarget target, RenderStates states)
-		{
-			if (!Alive)
-				return;
-
-			states.Texture = texture;
-			target.Draw(verts.ToArray(), PrimitiveType.Quads, states);
-		}
-	}
-
 	public class ParticleSpawner : DrawableGameComponent
 	{
 		public bool Active { get; private set; }
 
-		ImageManager imageManager;
 		ParticleManager particleManager;
 
 		double particleLifetime;
+		Vector2f particleVelocity;
+		float particleAngularVelocity;
 		string particleTextureName;
 
 		public ParticleSpawner(int initPriority)
 			: base(initPriority)
 		{
-
+			Visible = false;
 		}
 
 		protected override bool Init()
 		{
 			bool failed = false;
-			imageManager = Game.GetComponent<ImageManager>(out failed);
-			if (failed)
-			{
-				Console.WriteLine("Cannot find ImageManager in {0}", Game.GetType().Name);
-				return false;
-			}
-
 			particleManager = Game.GetComponent<ParticleManager>(out failed);
 			if (failed)
 			{
@@ -102,9 +38,39 @@ namespace Fartseer.Components
 			return base.Init();
 		}
 
-		public void Activate(double lifetime, string texturename)
+		public void Activate(double lifetime, Vector2f velocity, float angularVelocity, string texturename)
 		{
+			particleLifetime = lifetime;
+			particleTextureName = texturename;
+			particleVelocity = velocity;
+			particleAngularVelocity = angularVelocity;
+			Active = true;
+		}
 
+		public void Deactivate()
+		{
+			Active = false;
+		}
+
+		public override void Update(double frametime)
+		{
+			base.Update(frametime);
+
+			if (!Active)
+				return;
+
+			SpawnOneParticle(particleLifetime, particleVelocity, particleAngularVelocity, particleTextureName);
+		}
+
+		public void SpawnOneParticle(double lifetime, Vector2f velocity, float angularVelocity, string textureName)
+		{
+			particleManager.CreateParticle(lifetime, velocity, angularVelocity, textureName);
+		}
+
+		public void SpawnMultipleParticles(int count, double lifetime, Vector2f velocity, float angularVelocity, string textureName)
+		{
+			for (int i = 0; i < count; i++)
+				SpawnOneParticle(lifetime, velocity, angularVelocity, textureName);
 		}
 	}
 }

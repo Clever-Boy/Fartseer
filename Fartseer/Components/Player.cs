@@ -24,7 +24,10 @@ namespace Fartseer.Components
 		protected override List<GameComponent> GetInitComponents()
 		{
 			List<GameComponent> components = new List<GameComponent>();
+
 			components.Add(new CenterView());
+			components.Add(new ParticleSpawner(0));
+
 			return components;
 		}
 
