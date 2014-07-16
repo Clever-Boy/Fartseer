@@ -19,6 +19,8 @@ namespace Fartseer.Components
 	{
 		Physics physics;
 
+		RealExplosion explosion;
+
 		public EffectManager(int initPriority)
 			: base (initPriority)
 		{
@@ -35,13 +37,14 @@ namespace Fartseer.Components
 				return false;
 			}
 
+			explosion = new RealExplosion(physics.World);
+
 			return base.Init();
 		}
 
 		public void Explode(Vector2f position, float radius, float power) // position and radius are in sim units
 		{
 			//Console.WriteLine("BOOM!");
-			RealExplosion explosion = new RealExplosion(physics.World);
 			explosion.Activate(ConvertUnits.ToSimUnits(position.ToVector2()), radius, power);
 		}
 	}
