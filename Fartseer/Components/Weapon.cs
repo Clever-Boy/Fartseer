@@ -77,22 +77,20 @@ namespace Fartseer.Components
 
 		public void Fire()
 		{
+			int spread = rand.Next(-800, 800) / 100;
 			if (!IsRaycast)
-			{
-				int spread = rand.Next(-8, 8);
 				projectileManager.CreateProjectile(Position.ToVector2(), sprite.Rotation + 90f + spread);
-			}
 			else
 			{
-				Vector2f dir = Extensions.RadianToVector((sprite.Rotation + 90f) * ((float)Math.PI / 180));
-				Vector2f end = dir * 300f;
-				worldRenderer.AddLine(Position, Position + end, Color.Red, 1000);
+				Vector2f dir = Extensions.RadianToVector((sprite.Rotation + 90f + spread) * ((float)Math.PI / 180));
+				Vector2f end = dir * 400f;
+				worldRenderer.AddLine(Position, Position + end, Color.Red, 100);
 
-				List<Fixture> hits = physics.Raycast(Position.ToVector2(), (Position + end).ToVector2());
+				List<RayInfo> hits = physics.Raycast(Position.ToVector2(), (Position + end).ToVector2());
 				//Console.WriteLine(hits.Count);
-				foreach (Fixture hit in hits)
+				foreach (RayInfo hit in hits)
 				{
-					hit.Body.ApplyLinearImpulse(new Microsoft.Xna.Framework.Vector2(0, -10));
+					hit.fixture.Body.ApplyLinearImpulse(-hit.normal * 5f);
 				}
 			}
 		}

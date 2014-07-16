@@ -18,6 +18,20 @@ using Microsoft.Xna.Framework;
 
 namespace Fartseer.Components
 {
+	public class RayInfo
+	{
+		public Fixture fixture;
+		public Vector2 point;
+		public Vector2 normal;
+
+		public RayInfo(Fixture fixture, Vector2 point, Vector2 normal)
+		{
+			this.fixture = fixture;
+			this.point = point;
+			this.normal = normal;
+		}
+	}
+
 	public class BodyInfo
 	{
 		//public Sprite sprite;
@@ -124,18 +138,18 @@ namespace Fartseer.Components
 			World.RemoveBody(body);
 		}
 
-		public List<Fixture> Raycast(Vector2 from, Vector2 to)
+		public List<RayInfo> Raycast(Vector2 from, Vector2 to)
 		{
 			Vector2 simFrom = ConvertUnits.ToSimUnits(from);
 			Vector2 simTo = ConvertUnits.ToSimUnits(to);
 			//Console.WriteLine("Raycasting from {0} to {1}", from, to);
-			List<Fixture> fixtures = new List<Fixture>();
-			World.RayCast((fixture, point, normal, fr) =>
+			List<RayInfo> result = new List<RayInfo>();
+			World.RayCast((fixture, point, normal, fraction) =>
 			{
-				fixtures.Add(fixture);
-				return 0;
+				result.Add(new RayInfo(fixture, point, normal));
+				return fraction;
 			}, simFrom, simTo);
-			return fixtures;
+			return result;
 		}
 	}
 }
