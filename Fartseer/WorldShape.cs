@@ -34,24 +34,24 @@ namespace Fartseer
 
 		public virtual void Update(double frametime)
 		{
-			if (Alive)
+			if (!Alive)
+				return;
+
+			lifetimer += frametime;
+			if (lifetimer >= lifetime)
 			{
-				lifetimer += frametime;
-				if (lifetimer >= lifetime)
-				{
-					lifetimer = 0;
-					Alive = false;
-					//Console.WriteLine("{0} died", this.GetType().Name);
-				}
+				lifetimer = 0;
+				Alive = false;
+				//Console.WriteLine("{0} died", this.GetType().Name);
 			}
 		}
 
 		public void Draw(RenderTarget target, RenderStates states)
 		{
-			if (Alive)
-			{
-				target.Draw(verts.ToArray(), primitiveType, states);
-			}
+			if (!Alive)
+				return;
+
+			target.Draw(verts.ToArray(), primitiveType, states);
 		}
 	}
 
