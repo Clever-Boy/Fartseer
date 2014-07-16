@@ -21,6 +21,7 @@ namespace Fartseer
 
 		public double Frametime { get; private set; }
 		public double FPS { get; private set; }
+		public bool Focused { get; private set; }
 
 		VideoMode videoMode;
 		string title;
@@ -62,6 +63,18 @@ namespace Fartseer
 				Console.WriteLine("Closing game...");
 				Window.Close();
 			};
+
+			Window.LostFocus += (s, e) =>
+			{
+				Console.WriteLine("Lost focus");
+				Focused = false;
+			};
+			Window.GainedFocus += (s, e) =>
+			{
+				Console.WriteLine("Gained focus");
+				Focused = true;
+			};
+			Focused = true;
 
 			bgColor = new Color(100, 149, 237);
 
@@ -120,7 +133,8 @@ namespace Fartseer
 
 		public override void Update(double frametime)
 		{
-			base.Update(frametime);
+			if (Focused)
+				base.Update(frametime);
 		}
 
 		public override void Draw(RenderTarget target, RenderStates states)
