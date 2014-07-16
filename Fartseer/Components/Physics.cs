@@ -123,5 +123,19 @@ namespace Fartseer.Components
 		{
 			World.RemoveBody(body);
 		}
+
+		public List<Fixture> Raycast(Vector2 from, Vector2 to)
+		{
+			Vector2 simFrom = ConvertUnits.ToSimUnits(from);
+			Vector2 simTo = ConvertUnits.ToSimUnits(to);
+			//Console.WriteLine("Raycasting from {0} to {1}", from, to);
+			List<Fixture> fixtures = new List<Fixture>();
+			World.RayCast((fixture, point, normal, fr) =>
+			{
+				fixtures.Add(fixture);
+				return 0;
+			}, simFrom, simTo);
+			return fixtures;
+		}
 	}
 }

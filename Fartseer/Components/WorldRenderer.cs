@@ -21,6 +21,7 @@ namespace Fartseer.Components
 {
 	public class WorldRenderer : DrawableGameComponent
 	{
+		List<WorldShape> shapes;
 		Physics physics;
 		
 		public WorldRenderer(int initPriority)
@@ -38,12 +39,58 @@ namespace Fartseer.Components
 				return false;
 			}
 
+			shapes = new List<WorldShape>();
+
 			return base.Init();
+		}
+
+		// used in creating shapes
+		// returns the first unused shape and removes it from the shapes list to prepare it for re-addition
+		WorldShape GetNewOrUnusedShape()
+		{
+			WorldShape shape;
+			if ((shape = shapes.Find(s => !s.Alive)) != null)
+			{
+				//Console.WriteLine("Unused shape found");
+				shapes.Remove(shape);
+				return shape;
+			}
+
+			//Console.WriteLine("No unused shape found");
+			return null;
+		}
+
+		public void AddLine(Vector2f start, Vector2f end, Color color, double lifetime)
+		{
+			// GetUnusedShape will either return the first unused shape or null
+			// either way, the returned shape is recreated
+			WorldShape line = GetNewOrUnusedShape();
+
+			line = new Line(start, end, color, lifetime);
+			line.CreateVertices();
+			shapes.Add(line);
+
+			//Console.WriteLine("Line added. From: {0}, to: {1}. Shapes: {2}", start, end, shapes.Count);
+		}
+
+		public override void Update(double frametime)
+		{
+			base.Update(frametime);
+
+			foreach (WorldShape shape in shapes)
+			{
+				shape.Update(frametime);
+			}
 		}
 
 		public override void Draw(SFML.Graphics.RenderTarget target, SFML.Graphics.RenderStates states)
 		{
 			base.Draw(target, states);
+
+			foreach (WorldShape shape in shapes)
+			{
+				shape.Draw(target, states);
+			}
 
 			foreach (Body body in physics.World.BodyList)
 			{

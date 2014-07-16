@@ -35,9 +35,9 @@ namespace Fartseer.Components
 
 		public void Init(Vector2 position, float offset, float angle)
 		{
-			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(10, 10), "boxAlt");
-			//body.IsBullet = true;
-			//body.IgnoreGravity = true;
+			body = physics.CreateBody(BodyType.Dynamic, position, new Vector2(3, 3), "boxAlt");
+			body.IsBullet = true;
+			body.IgnoreGravity = true;
 			body.OnCollision += (fix1, fix2, contact) =>
 			{
 				//this.Remove();

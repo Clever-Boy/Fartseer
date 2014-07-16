@@ -6,12 +6,8 @@ using System.Text;
 using SFML.Graphics;
 using SFML.Window;
 
-using FarseerPhysics;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Common;
 using FarseerPhysics.Controllers;
 using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
 
 // this is some odd farseer shit
 using Microsoft.Xna.Framework;
@@ -52,10 +48,20 @@ namespace Fartseer.Components
 				return null;
 			}
 
+			Physics physics = Parent.GetComponent<Physics>(out failed);
+			if (failed)
+			{
+				Console.WriteLine("Cannot find Physics in {0}", Parent.GetType().Name);
+				return null;
+			}
+
 			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.A, (a) => a.Move(MoveDirection.Left, 5)));
 			commands.Add(CreateKeyboardCommand(CommandType.Continuous, Keyboard.Key.D, (a) => a.Move(MoveDirection.Right, 5)));
 			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.Space, (a) => a.Move(MoveDirection.Jump, 7)));
 			commands.Add(CreateKeyboardCommand(CommandType.Once, Keyboard.Key.E, (a) => { effectManager.Explode(Position, 10f, 50f, this.body); }));
+
+			commands.Add(CreateMouseCommand(CommandType.Once, Mouse.Button.Right, (a, pos) =>
+			{ physics.CreateBody(BodyType.Dynamic, Game.Window.MapPixelToCoords(pos).ToVector2(), new Vector2(32, 32), "boxAlt"); }));
 
 			return commands;
 		}
