@@ -87,6 +87,7 @@ namespace Fartseer.Components
 		// used by AddComponent, makes sure the component is initialized correctly
 		public bool DoInit(int initIndex)
 		{
+			System.Diagnostics.Stopwatch initTimer = System.Diagnostics.Stopwatch.StartNew();
 			Console.WriteLine("{0} initializing\n\tInit priority: {1}, init index: {2}\n\tParent restriction: {3}",
 				this.GetType().Name, initPriority, initIndex, parentRestriction);
 			this.initIndex = initIndex;
@@ -97,6 +98,8 @@ namespace Fartseer.Components
 			if (!Init())
 				return false;
 
+			initTimer.Stop();
+			Console.WriteLine("{0} initializing took {1} ms", this.GetType().Name, initTimer.Elapsed.TotalMilliseconds);
 			return true;
 		}
 
@@ -173,18 +176,20 @@ namespace Fartseer.Components
 
 		public T GetComponent<T>() where T : GameComponent
 		{
-			bool failed;
-			return GetComponent<T>(out failed, (c) => { return true; });
+			ComponentFindResult result;
+			return GetComponent<T>(out result, (c) => { return true; });
 		}
-		public T GetComponent<T>(out bool failed) where T : GameComponent
+		public T GetComponent<T>(out ComponentFindResult result) where T : GameComponent
 		{
 			// calls GetComponent with condition that will always be true
-			return GetComponent<T>(out failed, (c) => { return true; });
+			return GetComponent<T>(out result, (c) => { return true; });
 		}
-		public T GetComponent<T>(out bool failed, Func<T, bool> condition) where T : GameComponent
+		public T GetComponent<T>(out ComponentFindResult result, Func<T, bool> condition) where T : GameComponent
 		{
+			result = new ComponentFindResult();
 			T component = Components.Find(c => c is T && condition(c as T)) as T;
-			failed = component == null;
+			result.Failed = component == null;
+			result.FailedComponents = new List<string>() { typeof(T).Name };
 			return component;
 		}
 
