@@ -218,7 +218,7 @@ namespace Fartseer.Components
 				return true;
 			});
 
-			foreach (Type t in components.GetReadOnlyList())
+			foreach (Type t in components.AsReadOnly())
 				if (!list.Any(c => c.GetType() == t))
 				{
 					result.FailedComponents.Add(t.Name);

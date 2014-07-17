@@ -16,18 +16,18 @@ namespace Fartseer
 			contained = new List<Type>();
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<Type> GetReadOnlyList()
+		public System.Collections.ObjectModel.ReadOnlyCollection<Type> AsReadOnly()
 		{
 			return contained.AsReadOnly();
 		}
 
-		public ComponentList Add<T>()
+		public ComponentList Add<T>() where T : GameComponent
 		{
 			contained.Add(typeof(T));
 			return this;
 		}
 
-		public bool Contains<T>()
+		public bool Contains<T>() where T : GameComponent
 		{
 			return contained.Contains(typeof(T));
 		}
