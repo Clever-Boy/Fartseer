@@ -81,7 +81,9 @@ namespace Fartseer.Components
 					hit.fixture.Body.ApplyLinearImpulse(dir.ToVector2() * 2f);
 					lineEnd = FarseerPhysics.ConvertUnits.ToDisplayUnits(hit.point).ToVector2f();
 				}
-				worldRenderer.AddLine(Position, lineEnd, Color.Red, 500);
+
+				if (Game.Debug)
+					worldRenderer.AddLine(Position, lineEnd, Color.Red, 500);
 			}
 		}
 

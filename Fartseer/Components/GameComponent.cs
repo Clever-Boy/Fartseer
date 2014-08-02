@@ -34,16 +34,6 @@ namespace Fartseer.Components
 		}
 	}
 
-	public class ComponentFindResult
-	{
-		public bool Failed { get; set; }
-		public List<string> FailedComponents { get; set; }
-
-		public ComponentFindResult()
-		{
-		}
-	}
-
 	public abstract class GameComponent
 	{
 		public bool Enabled { get; set; }

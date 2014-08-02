@@ -9,11 +9,13 @@ namespace Fartseer
 	{
 		static void Main(string[] args)
 		{
+			Game game = new Game(new SFML.Window.VideoMode(800, 600), "Fartseer!");
+
 			#if DEBUG
-			Console.WriteLine("DEBUG BUILD");
+				Console.WriteLine("DEBUG BUILD");
+				game.ToggleDebug();
 			#endif
 
-			Game game = new Game(new SFML.Window.VideoMode(800, 600), "Fartseer!");
 			if (!game.DoInit(0))
 			{
 				Console.WriteLine("Game failed to initialize");

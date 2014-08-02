@@ -22,6 +22,7 @@ namespace Fartseer
 		public double Frametime { get; private set; }
 		public double FPS { get; private set; }
 		public bool Focused { get; private set; }
+		public bool Debug { get; private set; }
 
 		VideoMode videoMode;
 		string title;
@@ -33,6 +34,13 @@ namespace Fartseer
 			this.videoMode = videoMode;
 			this.title = title;
 			Game = this;
+		}
+
+		public bool ToggleDebug()
+		{
+			Debug = !Debug;
+			Console.WriteLine("Toggled debug to {0}", Debug);
+			return Debug;
 		}
 
 		protected override List<GameComponent> GetInitComponents()
