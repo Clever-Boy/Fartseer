@@ -43,11 +43,10 @@ namespace Fartseer.Components
 		{
 			List<Command> commands = base.SetupCommands();
 
-			ComponentFindResult findResult;
-			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<EffectManager>().Add<Physics>(), out findResult);
-			if (findResult.Failed)
+			List<GameComponent> result;
+			if (!(result = Game.GetComponents(new ComponentList().Add<EffectManager>().Add<Physics>())).Any())
 			{
-				Console.WriteLine("Cannot find requested components in {0}: {1}", Parent.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
+				Console.WriteLine("Cannot find requested components in {0}", Game.GetType().Name);
 				return commands;
 			}
 

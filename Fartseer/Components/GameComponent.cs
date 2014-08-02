@@ -176,37 +176,20 @@ namespace Fartseer.Components
 
 		public T GetComponent<T>() where T : GameComponent
 		{
-			ComponentFindResult result;
-			return GetComponent<T>(out result, (c) => { return true; });
+			return GetComponent<T>(c => true);
 		}
-		public T GetComponent<T>(out ComponentFindResult result) where T : GameComponent
+		public T GetComponent<T>(Func<T, bool> condition) where T : GameComponent
 		{
-			// calls GetComponent with condition that will always be true
-			return GetComponent<T>(out result, (c) => { return true; });
-		}
-		public T GetComponent<T>(out ComponentFindResult result, Func<T, bool> condition) where T : GameComponent
-		{
-			result = new ComponentFindResult();
 			T component = Components.Find(c => c is T && condition(c as T)) as T;
-			result.Failed = component == null;
-			result.FailedComponents = new List<string>() { typeof(T).Name };
 			return component;
 		}
 
 		public List<GameComponent> GetComponents(ComponentList components)
 		{
-			ComponentFindResult result;
-			return GetComponents(components, out result, c => true);
+			return GetComponents(components, c => true);
 		}
-		public List<GameComponent> GetComponents(ComponentList components, out ComponentFindResult result)
+		public List<GameComponent> GetComponents(ComponentList components, Func<GameComponent, bool> condition)
 		{
-			return GetComponents(components, out result, c => true);
-		}
-		public List<GameComponent> GetComponents(ComponentList components, out ComponentFindResult result, Func<GameComponent, bool> condition)
-		{
-			result = new ComponentFindResult();
-			result.Failed = false;
-			result.FailedComponents = new List<string>();
 			List<GameComponent> list = Components.FindAll((c) =>
 			{
 				if (!components.Contains(c.GetType()))
@@ -217,13 +200,6 @@ namespace Fartseer.Components
 
 				return true;
 			});
-
-			foreach (Type t in components.AsReadOnly())
-				if (!list.Any(c => c.GetType() == t))
-				{
-					result.FailedComponents.Add(t.Name);
-					result.Failed = true;
-				}
 
 			return list;
 		}

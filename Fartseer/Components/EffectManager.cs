@@ -29,11 +29,10 @@ namespace Fartseer.Components
 
 		protected override bool Init()
 		{
-			ComponentFindResult findResult;
-			List<GameComponent> result = Game.GetComponents(new ComponentList().Add<Physics>(), out findResult);
-			if (findResult.Failed)
+			List<GameComponent> result;
+			if (!(result = Game.GetComponents(new ComponentList().Add<Physics>())).Any())
 			{
-				Console.WriteLine("Cannot find requested components in {0}: {1}", Game.GetType().Name, String.Join(", ", findResult.FailedComponents.ToArray()));
+				Console.WriteLine("Cannot find requested components in {0}", Game.GetType().Name);
 				return false;
 			}
 
