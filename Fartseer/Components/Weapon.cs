@@ -78,7 +78,7 @@ namespace Fartseer.Components
 				Vector2f lineEnd = Position + end;
 				foreach (RayInfo hit in hits)
 				{
-					hit.fixture.Body.ApplyLinearImpulse(dir.ToVector2() * 5f);
+					hit.fixture.Body.ApplyLinearImpulse(dir.ToVector2() * 2f);
 					lineEnd = FarseerPhysics.ConvertUnits.ToDisplayUnits(hit.point).ToVector2f();
 				}
 				worldRenderer.AddLine(Position, lineEnd, Color.Red, 500);
